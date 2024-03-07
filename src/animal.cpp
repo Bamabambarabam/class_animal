@@ -104,25 +104,26 @@ Dog::Dog() : Animal(), name(nullptr) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<> distrib(0, 9);
-  int random_number = distrib(gen);
+  int64_t random_number = distrib(gen);
   race = static_cast<Breed>(random_number);
 }
 
 // конструктор инициализации
-Dog::Dog(const char* _name, Breed _race, float _mass, const char* _sex, const char* _color, int64_t _age)
+Dog::Dog(const char *_name, Breed _race, float _mass, const char *_sex, const char *_color, int64_t _age)
     : Animal(_mass, _sex, _color, _age), race(_race) {
   name = new char[strlen(_name) + 1];
   snprintf(name, strlen(_name) + 1, "%s", _name);
 }
 
 // конструктор копирования
-Dog::Dog(const Dog& other) : Animal(other), race(other.race) {
+Dog::Dog(const Dog &other) : Animal(other), race(other.race) {
   name = new char[strlen(other.name) + 1];
   snprintf(name, strlen(other.name) + 1, "%s", other.name);
 }
 
 // конструктор перемещения
-Dog::Dog(Dog&& other) noexcept : Animal(std::move(other)), name(std::move(other.name)), race(std::move(other.race)) {
+Dog::Dog(Dog &&other) noexcept: Animal(std::move(other)), name(std::move(other.name)),
+                                race(std::move(other.race)) {
   other.name = nullptr;
 }
 
@@ -131,8 +132,26 @@ Dog::~Dog() {
   delete[] name;
 }
 
+char *Dog::GetName() const {
+  return name;
+}
+
+Breed Dog::GetRace() const {
+  return race;
+}
+
+void Dog::SetName(const char *_name) {
+  delete[] name;
+  name = new char[strlen(_name) + 1];
+  snprintf(name, strlen(_name) + 1, "%s", _name);
+}
+
+void Dog::SetRace(Breed _race) {
+  race = _race;
+}
+
 // оператор присваивания
-Dog& Dog::operator=(const Dog& other) {
+Dog &Dog::operator=(const Dog &other) {
   if (this == &other) {
     return *this;
   } else {
@@ -144,7 +163,7 @@ Dog& Dog::operator=(const Dog& other) {
 }
 
 // оператор перемещения
-Dog& Dog::operator=(Dog&& other) noexcept {
+Dog &Dog::operator=(Dog &&other) noexcept {
   if (this == &other) {
     return *this;
   } else {
@@ -156,27 +175,124 @@ Dog& Dog::operator=(Dog&& other) noexcept {
   }
 }
 
+const char *Dog::WhatDoesSay() const {
+  return "WOOOF!!!";
+}
 
-char* Dog::GetName() const {
+// конструктор по-умолчанию (Присваиваем тип в зависимости от сгенерированного числа)
+Fox::Fox() : Animal(), name(nullptr), numberRabbitsEaten(0) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> distrib(0, 9);
+  int64_t random_number = distrib(gen);
+  type = static_cast<TypeFox>(random_number);
+}
+
+// конструктор инициализации
+Fox::Fox(const char *_name, TypeFox _type, float _mass, const char *_sex, const char *_color, int64_t _age)
+    : Animal(_mass, _sex, _color, _age), type(_type), numberRabbitsEaten(0) {
+  name = new char[strlen(_name) + 1];
+  snprintf(name, strlen(_name) + 1, "%s", _name);
+}
+
+// конструктор копирования
+Fox::Fox(const Fox &other) : Animal(other), type(other.type), numberRabbitsEaten(other.numberRabbitsEaten) {
+  name = new char[strlen(other.name) + 1];
+  snprintf(name, strlen(other.name) + 1, "%s", other.name);
+}
+
+// конструктор перемещения
+Fox::Fox(Fox &&other) noexcept: Animal(std::move(other)), name(std::move(other.name)),
+                                type(std::move(other.type)), numberRabbitsEaten(std::move(other.numberRabbitsEaten)) {
+  other.name = nullptr;
+}
+
+// деструктор
+Fox::~Fox() {
+  delete[] name;
+}
+
+char *Fox::GetName() const {
   return name;
 }
 
-Breed Dog::GetRace() const {
-  return race;
+TypeFox Fox::GetType() const {
+  return type;
 }
 
-void Dog::SetName(const char* _name) {
+int64_t Fox::GetNumberRabbitsEaten() const {
+  return numberRabbitsEaten;
+}
+
+void Fox::SetName(const char *_name) {
   delete[] name;
   name = new char[strlen(_name) + 1];
   snprintf(name, strlen(_name) + 1, "%s", _name);
 }
 
-void Dog::SetRace(Breed _race) {
-  race = _race;
+void Fox::SetType(TypeFox _type) {
+  type = _type;
 }
 
-const char* Dog::WhatDoesSay() const {
-  return "WOOOF!!!";
+void Fox::SetNumberRabbitsEaten(int64_t _numberRabbitsEaten) {
+  numberRabbitsEaten = _numberRabbitsEaten;
 }
 
+void Fox::Eat() {
+  numberRabbitsEaten++;
+}
 
+// оператор присваивания
+Fox &Fox::operator=(const Fox &other) {
+  if (this == &other) {
+    return *this;
+  } else {
+    Animal::operator=(other);
+    SetName(other.name);
+    type = other.type;
+    numberRabbitsEaten = other.numberRabbitsEaten;
+    return *this;
+  }
+}
+
+// оператор перемещения
+Fox &Fox::operator=(Fox &&other) noexcept {
+  if (this == &other) {
+    return *this;
+  } else {
+    Animal::operator=(std::move(other));
+    name = std::move(other.name);
+    type = std::move(other.type);
+    numberRabbitsEaten = std::move(other.numberRabbitsEaten);
+    other.numberRabbitsEaten = 0;
+    other.name = nullptr;
+    return *this;
+  }
+}
+
+const char *Fox::WhatDoesSay() const {
+  switch (type) {
+    case TypeFox::FennecFox:
+      return "Ring-ding-ding-ding-dingeringeding!\n"
+             "Gering-ding-ding-ding-dingeringeding!\n"
+             "Gering-ding-ding-ding-dingeringeding!";
+    case TypeFox::ArcticFox:
+      return "Wa-pa-pa-pa-pa-pa-pow!\n"
+             "Wa-pa-pa-pa-pa-pa-pow!\n"
+             "Wa-pa-pa-pa-pa-pa-pow!";
+    case TypeFox::RedFox:
+      return "Hatee-hatee-hatee-ho!\n"
+             "Hatee-hatee-hatee-ho!\n"
+             "Hatee-hatee-hatee-ho!";
+    case TypeFox::GrayFox:
+      return "Joff-tchoff-tchoffo-tchoffo-tchoff!\n"
+             "Tchoff-tchoff-tchoffo-tchoffo-tchoff!\n"
+             "Joff-tchoff-tchoffo-tchoffo-tchoff!";
+    case TypeFox::SwiftFox:
+      return "Jacha-chacha-chacha-chow!\n"
+             "Chacha-chacha-chacha-chow!\n"
+             "Chacha-chacha-chacha-chow!";
+    default: return "Unknown";
+  }
+
+}
