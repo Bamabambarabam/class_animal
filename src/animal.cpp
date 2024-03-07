@@ -8,7 +8,7 @@
 Animal::Animal() : mass(0.0), sex(nullptr), color(nullptr), age(0) {}
 
 // конструктор инциализации
-Animal::Animal(const float _mass, const char *_sex, const char *_color, const int _age) : mass(_mass), age(_age) {
+Animal::Animal(const float _mass, const char *_sex, const char *_color, const int64_t _age) : mass(_mass), age(_age) {
   sex = new char[strlen(_sex) + 1];
   snprintf(sex, strlen(_sex) + 1, "%s", _sex);
   color = new char[strlen(_color) + 1];
@@ -99,7 +99,84 @@ Animal &Animal::operator=(Animal &&other) noexcept {
   }
 }
 
+// конструктор по-умолчанию (Присваиваем породу в зависимости от сгенерированного числа)
+Dog::Dog() : Animal(), name(nullptr) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> distrib(0, 9);
+  int random_number = distrib(gen);
+  race = static_cast<Breed>(random_number);
+}
+
+// конструктор инициализации
+Dog::Dog(const char* _name, Breed _race, float _mass, const char* _sex, const char* _color, int64_t _age)
+    : Animal(_mass, _sex, _color, _age), race(_race) {
+  name = new char[strlen(_name) + 1];
+  snprintf(name, strlen(_name) + 1, "%s", _name);
+}
+
+// конструктор копирования
+Dog::Dog(const Dog& other) : Animal(other), race(other.race) {
+  name = new char[strlen(other.name) + 1];
+  snprintf(name, strlen(other.name) + 1, "%s", other.name);
+}
+
+// конструктор перемещения
+Dog::Dog(Dog&& other) noexcept : Animal(std::move(other)), name(std::move(other.name)), race(std::move(other.race)) {
+  other.name = nullptr;
+}
+
+// деструктор
+Dog::~Dog() {
+  delete[] name;
+}
+
+// оператор присваивания
+Dog& Dog::operator=(const Dog& other) {
+  if (this == &other) {
+    return *this;
+  } else {
+    Animal::operator=(other);
+    SetName(other.name);
+    race = other.race;
+    return *this;
+  }
+}
+
+// оператор перемещения
+Dog& Dog::operator=(Dog&& other) noexcept {
+  if (this == &other) {
+    return *this;
+  } else {
+    Animal::operator=(std::move(other));
+    name = std::move(other.name);
+    race = std::move(other.race);
+    other.name = nullptr;
+    return *this;
+  }
+}
 
 
+char* Dog::GetName() const {
+  return name;
+}
+
+Breed Dog::GetRace() const {
+  return race;
+}
+
+void Dog::SetName(const char* _name) {
+  delete[] name;
+  name = new char[strlen(_name) + 1];
+  snprintf(name, strlen(_name) + 1, "%s", _name);
+}
+
+void Dog::SetRace(Breed _race) {
+  race = _race;
+}
+
+const char* Dog::WhatDoesSay() const {
+  return "WOOOF!!!";
+}
 
 
