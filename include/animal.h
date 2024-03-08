@@ -5,7 +5,6 @@
 
 #include <string>
 #include <cstdint>
-#include <typeinfo>
 #include <iostream>
 #include <cctype>
 #include <cstring>
@@ -55,6 +54,7 @@ enum class Breed {
   Dachshund,
   SiberianHusky
 };
+std::ostream &operator<<(std::ostream &os, const Breed &breed);
 
 class Dog : public Animal {
  private:
@@ -87,6 +87,8 @@ enum class TypeFox {
   SwiftFox
 };
 
+std::ostream &operator<<(std::ostream &os, const TypeFox &type);
+
 class Fox : public Animal {
  private:
   char *name;
@@ -112,6 +114,7 @@ class Fox : public Animal {
   Fox &operator=(const Fox &other);
   Fox &operator=(Fox &&other) noexcept;
 
+  friend std::ostream &operator<<(std::ostream &os, const TypeFox &type);
   const char *WhatDoesSay() const override;
 };
 
