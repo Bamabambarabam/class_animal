@@ -1,7 +1,6 @@
 // Copyright 2024 HSE NN
 // Author: Lev Pestov
 
-
 #include "animal.h"
 
 // default constructor
