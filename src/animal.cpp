@@ -101,7 +101,7 @@ Animal &Animal::operator=(Animal &&other) noexcept {
 
 // default constructor (Assign the type depending on the generated number)
 Dog::Dog() : Animal(), name(nullptr) {
-  int64_t random_number = rand() % 9;
+  int64_t random_number = rand() % 8;
   race = static_cast<Breed>(random_number);
 }
 
@@ -178,7 +178,7 @@ const char *Dog::WhatDoesSay() const {
 
 // default constructor (Assign the type depending on the generated number)
 Fox::Fox() : Animal(), name(nullptr), numberRabbitsEaten(0) {
-  int64_t random_number = rand() % 9;
+  int64_t random_number = rand() % 4;
   type = static_cast<TypeFox>(random_number);
 }
 
